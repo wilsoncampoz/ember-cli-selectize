@@ -94,6 +94,9 @@ Its usage should be very similar to `Ember.Select`, but with additional features
     <td valign="top">If <code>sortField</code> is a string, specify the direction. Example: <code>"asc"</code> or <code>"desc"</code>. This is ignored if <code>sortField</code> is an array (you can specify direction inside that array).</td>
   </tr>
   <tr>
+    <td valign="top"><code>searchField</code></td>
+    <td valign="top">If <code>searchField</code> is a string, it specifies what field should be searched on. It also accepts an array to search on multiple fields, e.g., <code>['label', 'value']</code>. Defaults to <code>'label'</code>.</td>
+  <tr>
     <td valign="top"><code>filter</code></td>
     <td valign="top">This property will have the text that the user entered to filter options. Useful for searching options in server from a large set.</td>
   </tr>
@@ -163,6 +166,11 @@ Ember is moving towards a paradigm that encourages the use of actions. With this
   <tr>
     <td valign="top"><code>on-init</code></td>
     <td valign="top">Sent once the control is completely initialized.</td>
+  </tr>
+  <tr>
+    <td valign="top"><code>score</code></td>
+    <td valign="top">Overrides the default score() method if a cutom one is passed as an option to
+    the component.</td>
   </tr>
 </table>
 

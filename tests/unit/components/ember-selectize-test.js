@@ -25,6 +25,14 @@ test('it renders', function(assert) {
   //test select tagname and ember-selectize class
 });
 
+test('name attribute is bound', function(assert) {
+  var component = this.subject();
+  Ember.run(function() {
+    component.set('name', 'pouet');
+  });
+  assert.equal(this.$().attr('name'), 'pouet');
+});
+
 test('multiple attribute is bound', function(assert) {
   var component = this.subject();
   Ember.run(function() {
@@ -52,7 +60,7 @@ test('tabindex attribute is properly set to input', function(assert){
   Ember.run(function() {
     component.set('tabindex', tabindex);
   });
-  
+
   assert.equal(this.$().parent().find('input').attr('tabindex'), tabindex);
 });
 
@@ -620,10 +628,10 @@ test('it sends create-item action when an item is created in selectize', functio
     }
   };
   this.render();
-  component.set('create-item', 'externalAction');
-  component.set('targetObject', targetObject);
 
   Ember.run(function() {
+    component.set('create-item', 'externalAction');
+    component.set('targetObject', targetObject);
     component._create(testText, function() {});
   });
 });
@@ -923,6 +931,35 @@ test('selection can be set from a Promise when multiple=false', function(assert)
   assert.deepEqual(component._selectize.items, ["2"]);
 });
 
+test('changing selection to a promise that resolves to null clears selection', function(assert) {
+  assert.expect(4);
+
+  var component = this.subject();
+
+  var yehuda = Ember.Object.create({ id: 1, firstName: 'Yehuda' });
+  var tom = Ember.Object.create({ id: 2, firstName: 'Tom' });
+
+  Ember.run(function() {
+    component.set('content', Ember.A([yehuda, tom]));
+    component.set('multiple', false);
+    component.set('optionValuePath', 'id');
+    component.set('optionLabelPath', 'firstName');
+    component.set('selection', Ember.RSVP.Promise.resolve(tom));
+  });
+
+  this.render();
+
+  assert.equal(component._selectize.items.length, 1);
+  assert.deepEqual(component._selectize.items, ["2"]);
+
+  Ember.run(function() {
+    component.set('selection', Ember.RSVP.Promise.resolve(null));
+  });
+
+  assert.equal(component._selectize.items.length, 0);
+  assert.deepEqual(component._selectize.items, []);
+});
+
 test('selection from a Promise don\'t overwrite newer selection once resolved, when multiple=false', function(assert) {
   assert.expect(1);
 
@@ -1030,9 +1067,8 @@ test('content from a Promise don\'t overwrite newer content once resolved', func
 
 test('renders components', function(assert) {
 
+  this.register('component:foo-bar', Ember.Component.extend({}));
   this.register('template:components/foo-bar', hbs`Hi, {{data.firstName}}!`);
-  this.register('component:foo-bar', Ember.Component.extend({
-  }));
 
   var yehuda = Ember.Object.create({ id: 1, firstName: 'Yehuda' });
   var tom = Ember.Object.create({ id: 2, firstName: 'Tom' });
